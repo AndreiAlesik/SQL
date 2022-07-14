@@ -1,0 +1,59 @@
+--1
+INSERT INTO pracownicy(id_prac, nazwisko) VALUES ((SELECT max(id_prac) + 1 FROM pracownicy), 'WOLNY');
+
+--2
+select p.nazwisko, z.id_zesp, z.nazwa from pracownicy p left outer join zespoly z on z.id_zesp = p.id_zesp order by p.nazwisko;
+
+--3
+select z.nazwa, z.id_zesp, case 
+when p.nazwisko is null then 'brak pracownikow'
+else p.nazwisko 
+end as "nazwa"
+from zespoly z left outer join pracownicy p on z.id_zesp = p.id_zesp order by z.nazwa;
+
+--4
+select nvl(nazwa,'brak'),  nazwisko  from PRACOWNICY p left join zespoly z on z.id_ZESP=p.id_ZESP;
+
+--5
+select nazwa, count(id_prac) as liczba, sum(p.placa_pod) as suma_plac from pracownicy p right join  zespoly z on z.id_ZESP=p.id_ZESP  group by nazwa;
+
+--6
+select nazwa
+from pracownicy p right join  zespoly z on z.id_ZESP=p.id_ZESP  
+where p.id_zesp is null group by nazwa;
+
+--7
+select p.nazwisko, p.id_prac, s.nazwisko as szef, p.id_szefa from pracownicy s right join PRACOWNICY p on p.id_szefa=s.id_prac; 
+
+--8
+select s.nazwisko as szef, count(p.id_prac) as LICZBA_PODWLADNYCH from pracownicy s left join PRACOWNICY p on p.id_szefa=s.id_prac group by s.nazwisko; 
+
+--9
+select p.nazwisko,p.etat, p.placa_pod, z.nazwa, s.nazwisko as szef 
+from pracownicy p left join ZESPOLY z on p.id_zesp=z.id_zesp left join pracownicy s on p.id_szefa=s.id_prac;
+
+--10
+select nazwisko, nazwa from PRACOWNICY,ZESPOLY;
+
+--11
+select count(*) from PRACOWNICY,zespoly , etaty;
+
+--12
+select etat from PRACOWNICY where extract(year from zatrudniony)=1992
+intersect
+select etat from PRACOWNICY where extract(year from zatrudniony)=1993;
+
+--13
+select id_zesp from ZESPOLY
+MINUS
+select id_zesp from PRACOWNICY;
+
+--14
+select id_zesp, nazwa from ZESPOLY
+MINUS
+select id_zesp, nazwa from PRACOWNICY natural join ZESPOLY;
+select nazwisko, placa_pod, 'ponizej' from pracownicy where placa_pod<480
+union 
+select nazwisko, placa_pod, 'rowne' from pracownicy where placa_pod=480
+union 
+select nazwisko, placa_pod, 'powyzej' from pracownicy where placa_pod>480;
