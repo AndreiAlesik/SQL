@@ -1,0 +1,49 @@
+--1
+SELECT min(placa_pod) as minimum, max(placa_pod) as maximum, max(placa_pod)-min(placa_pod) as roznica from PRACOWNICY;
+
+--2
+select etat, AVG(placa_pod) as srednia from PRACOWNICY GROUP by etat order by srednia desc;
+
+--3
+select count(*) as PROFESOROWIE from PRACOWNICY GROUP by etat HAVING ETAT='PROFESOR';
+
+--4
+select id_zesp, sum(placa_pod)+sum(PLACA_DOD) as SUMARYCZNE_PLACE from PRACOWNICY GROUP by ID_ZESP order by ID_ZESP;
+
+--5
+select max(sum(placa_pod)+sum(PLACA_DOD)) as MAKS_SUM_PLACA from PRACOWNICY GROUP by ID_ZESP order by ID_ZESP;
+
+--6
+SELECT id_szefa, min(placa_pod) as minimalna from pracownicy where id_szefa IS NOT NULL  group by id_szefa order by id_szefa;
+
+--7
+select id_zesp, count(*) as ILU_PRACUJE from PRACOWNICY group by id_zesp order by ILU_PRACUJE DESC;
+
+--8
+select id_zesp, count(*) as ILU_PRACUJE from PRACOWNICY group by id_zesp HAVING count(*)>3 order by ILU_PRACUJE DESC;
+
+--9
+select id_prac, COUNT(*) as duplicaty from pracownicy GROUP BY id_prac having count(*)>1;
+
+--10
+select etat, avg(placa_pod) as srednia, count(*) as liczba from PRACOWNICY WHERE EXTRACT(year from zatrudniony)<=1990 GROUP by etat order by etat;
+
+--11
+select id_zesp, etat, avg(placa_pod+COALESCE(placa_dod,0)) as srednia, MAX(placa_pod+COALESCE(placa_dod,0)) as  MAKSYMALNA from PRACOWNICY 
+WHERE etat in ('PROFESOR' ,'ASYSTENT') GROUP BY id_zesp,etat order by id_zesp, etat;\
+
+--12
+select EXTRACT(year from zatrudniony) as rok, count(*) as ilu_pracownikow from PRACOWNICY group by EXTRACT(year from zatrudniony) ORDER BY rok;
+
+--13
+select length(nazwisko) as Ile_liter, COUNT(*) as W_ilu_nazwiskach from pracownicy GROUP by length(NAZWISKO) order by Ile_liter;
+
+--14
+select count(case when instr(nazwisko, 'A',1,1)>0  then 1 else null end) as Ile_liter_A from PRACOWNICY; 
+
+--15
+select COUNT(case when instr(nazwisko,'A',1,1)>0 then 1 else null end) as Ile_liter_A, COUNT(case when instr(nazwisko,'E',1,1)>0 then 1 else null end) as Ile_liter_E 
+from pracownicy;
+
+--16
+select id_zesp, sum(placa_pod) as suma_plac , LISTAGG(nazwisko||':'||placa_pod||';') as PRACOWNICY from pracownicy group by ID_ZESP order by id_zesp;
