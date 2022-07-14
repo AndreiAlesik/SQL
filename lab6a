@@ -1,0 +1,55 @@
+--1
+SELECT nazwisko, etat, id_zesp from PRACOWNICY 
+where id_zesp=(select id_zesp from PRACOWNICY where nazwisko='BRZEZINSKI');
+
+--2
+SELECT p.nazwisko, p.etat, z.nazwa 
+from PRACOWNICY p join zespoly z on p.id_zesp=z.ID_ZESP
+where p.id_zesp=(select id_zesp from PRACOWNICY where nazwisko='BRZEZINSKI');
+
+--3
+INSERT INTO pracownicy(id_prac, nazwisko, etat, zatrudniony)
+VALUES ((SELECT max(id_prac) + 1 FROM pracownicy),
+ 'WOLNY', 'ASYSTENT', DATE '1968-07-01'); 
+
+select nazwisko, etat, ZATRUDNIONY from PRACOWNICY
+where etat='PROFESOR' and ZATRUDNIONY=(select min(ZATRUDNIONY) from PRACOWNICY where etat='PROFESOR');
+
+--4
+select nazwisko, zatrudniony, id_zesp from pracownicy where (id_zesp, zatrudniony) in (select id_zesp,max(zatrudniony) from PRACOWNICY  where id_zesp is not null group by id_zesp) order by ZATRUDNIONY;
+
+--5
+select * from pracownicy;
+select id_zesp, nazwa, adres from ZESPOLY where id_zesp not in (select id_zesp from pracownicy where id_zesp is not NULL);
+
+--7
+DELETE FROM pracownicy
+WHERE nazwisko = 'WOLNY'; 
+
+select nazwisko from pracownicy where etat='PROFESOR' and id_prac not in (select id_szefa from pracownicy where etat='STAZYSTA');
+
+--8
+SELECT P.ID_ZESP, SUM(P.PLACA_POD) AS SUMA_PLAC 
+FROM PRACOWNICY P INNER JOIN ZESPOLY Z ON P.ID_ZESP=Z.ID_ZESP 
+group by P.ID_ZESP
+HAVING SUM(P.PLACA_POD)=(SELECT MAX(SUM(p2.PLACA_POD)) FROM PRACOWNICY p2 inner join ZESPOLY z  on p2.id_zesp=z.id_zesp group by p2.id_zesp);
+
+--9
+select z.nazwa, count(*) as ILU_PRACOWNIKOW  from PRACOWNICY p
+inner join zespoly z on p.id_zesp=z.ID_ZESP
+group by z.nazwa, z.ID_ZESP
+HAVING count(*)>
+(select count(*) from pracownicy p
+inner join zespoly z on p.id_zesp=z.ID_ZESP
+group by z.id_zesp, z.nazwa
+HAVING z.nazwa='ADMINISTRACJA');
+
+--10
+select etat, LISTAGG(nazwisko,', ') within group(order by nazwisko) as pracownicy from pracownicy 
+group by ETAT
+HAVING count(*)=(select max(count(*)) from pracownicy group by ETAT);
+
+--11
+select p.nazwisko PRACOWNIK , s.nazwisko SZEF from pracownicy p inner join pracownicy s on p.id_szefa=s.id_prac
+where (s.PLACA_POD-p.PLACA_POD)=(select min(abs(s.PLACA_POD-p.PLACA_POD)) from pracownicy p
+inner join pracownicy s on p.id_szefa=s.id_prac);
