@@ -1,0 +1,37 @@
+--1
+select nazwisko, substr(ETAT, 1,2)|| ID_PRAC as KOD from PRACOWNICY;
+
+--2
+select nazwisko, TRANSLATE(nazwisko,'KLM','XXX') as WOJNA_LITEROM from PRACOWNICY;
+
+--3
+select nazwisko from PRACOWNICY where instr(
+    substr(nazwisko,1,length(NAZWISKO)/2), 
+    'L',
+    1,
+    1)>0;
+
+--4
+SELECT nazwisko, ROUND((placa_pod+placa_pod*0.15),0) as PODWYZKA from PRACOWNICY;
+
+--5
+select nazwisko, to_char(zatrudniony,'YY-DD-MM') as zatrudniony, EXTRACT( year FROM(date '2000-01-01'-zatrudniony)year to month) as staż_w_2000 from PRACOWNICY;
+
+--6
+select nazwisko, placa_pod,  placa_pod*0.2 as inwestycja,  placa_pod*0.2*POWER(1.1,10) as kapital,placa_pod*0.2*(POWER(1.1,10) -1) as zysk from PRACOWNICY;
+
+--7
+select nazwisko, to_char(zatrudniony,'MONTH, DD YYYY') as data_zatrudnienia from PRACOWNICY where id_zesp=20;
+
+--8
+SELECT to_char(current_date,'DAY') as DZIS from dual;
+
+--9
+select NAZWA, ADRES, case(substr(adres,1,instr(adres, ' ')-1)) 
+ WHEN 'PIOTROWO' then 'NOWE MIASTO' when 'STRZELECKA' then 'STARE MIASTO' when'WLODKOWICA' then 'GRUNWALD' 
+else 'STARE MIASTO'  end as DZIELNICA from ZESPOLY;
+
+--10
+select nazwisko, placa_pod, case 
+when placa_pod<480 then 'Poniżej 480' 
+when placa_pod=480 then 'Dokładnie 480' else 'Powyżej 480' end as prog from PRACOWNICY order by placa_pod desc;
