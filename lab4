@@ -1,0 +1,68 @@
+--1
+select p.nazwisko, p.etat, p.id_zesp, z.nazwa 
+from pracownicy p inner join zespoly z on p.id_zesp = z.id_zesp 
+order by p.nazwisko;
+
+--2
+select p.nazwisko, p.etat, p.id_zesp, z.nazwa
+from pracownicy p inner join zespoly z on p.id_zesp = z.id_zesp
+where z.adres = 'PIOTROWO 3A'
+order by p.nazwisko;
+
+--3
+select p.nazwisko, p.etat, p.placa_pod, e.placa_min, e.placa_max
+from pracownicy p inner join etaty e on p.etat = e.nazwa
+order by p.nazwisko;
+
+--4
+select p.nazwisko, p.etat, p.placa_pod, e.placa_min, e.placa_max,
+case when e.placa_min <= p.placa_pod and p.placa_pod <= e.placa_max then 'OK' else 'NIE' end as czy_pensja_ok
+from pracownicy p inner join etaty e on p.etat = e.nazwa
+order by p.nazwisko;
+
+--5
+select p.nazwisko, p.etat, p.placa_pod, e.placa_min, e.placa_max
+from pracownicy p inner join etaty e on p.etat = e.nazwa
+where p.placa_pod < e.placa_min or p.placa_pod > e.placa_max
+order by p.nazwisko;
+
+--6
+select p.nazwisko, p.placa_pod, p.etat, e.nazwa as kat_plac,  e.placa_min, e.placa_max
+from pracownicy p inner join etaty e on e.placa_min <= p.placa_pod and p.placa_pod <= e.placa_max
+order by p.nazwisko, kat_plac;
+
+--7
+select p.nazwisko, p.placa_pod, p.etat, e.nazwa as kat_plac,  e.placa_min, e.placa_max
+from pracownicy p inner join etaty e on p.placa_pod >=e.placa_min and p.placa_pod <= e.placa_max
+where e.nazwa='SEKRETARKA'
+order by p.nazwisko, kat_plac;
+
+--8
+select p.nazwisko, p.id_prac, s.nazwisko as szef, s.id_prac as id_szefa
+from pracownicy p inner join pracownicy s on p.id_szefa = s.id_prac
+order by p.nazwisko;
+
+--9
+SELECT P.NAZWISKO AS pracownik, p. zatrudniony as PRAC_ZATRUDNIONY , s.nazwisko as  SZEF, s.zatrudniony as SZEF_ZATRUDNIONY,
+extract(year from p.zatrudniony)- extract(year from s.zatrudniony) as lata 
+from pracownicy p inner join pracownicy s on p.id_szefa =s.id_prac 
+where extract(year from p.zatrudniony) - extract(year from s.zatrudniony) <=9
+order by lata, p.nazwisko;
+
+--10
+select z.nazwa, count(*) as LICZBA, avg(p.placa_pod) as srednia_placa
+from pracownicy p inner join zespoly z on p.id_zesp = z.id_zesp
+GROUP BY Z.nazwa
+ORDER BY Z.nazwa;
+
+--11
+SELECT z.nazwa,
+case
+when count(*) > 6 then 'duży'
+when count(*) > 2 then 'średni'
+else 'mały' 
+end as ETYKIETA
+from pracownicy p inner join zespoly z on p.id_zesp = z.id_zesp
+group by z.nazwa
+having count(*) > 0
+order by z.nazwa;
