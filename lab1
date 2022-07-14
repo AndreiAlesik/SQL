@@ -1,0 +1,45 @@
+--1
+SELECT * FROM zespoly ORDER BY ID_ZESP;
+
+--2
+SELECT * FROM pracownicy ORDER BY ID_PRAC;
+
+--3
+SELECT NAZWISKO, PLACA_POD*12 AS "roczna płaca" FROM pracownicy ORDER BY NAZWISKO;
+
+--4
+SELECT NAZWISKO, ETAT, PLACA_POD+COALESCE(placa_dod, 0) AS MIESIECZNE_ZAROBKI
+FROM pracownicy  ORDER BY MIESIECZNE_ZAROBKI DESC;
+
+--5
+SELECT ID_ZESP, NAZWA, ADRES FROM ZESPOLY ORDER BY NAZWA;
+
+--6
+SELECT DISTINCT ETAT FROM pracownicy ORDER BY ETAT;
+
+--7
+select ID_PRAC, NAZWISKO, ETAT,ID_SZEFA, ZATRUDNIONY, PLACA_POD, COALESCE(placa_dod,0) as PLACA_DOD, ID_ZESP from pracownicy WHERE ETAT='ASYSTENT' ORDER BY NAZWISKO;
+
+--8
+select ID_PRAC, NAZWISKO, ETAT, PLACA_POD, ID_ZESP from pracownicy where ID_ZESP=30 order by PLACA_POD DESC;
+
+--9
+select NAZWISKO, ID_ZESP, PLACA_POD from pracownicy where PLACA_POD BETWEEN 300 and 800 order by NAZWISKO;
+
+--10
+select NAZWISKO, ETAT, ID_ZESP from pracownicy where  NAZWISKO LIKE '%SKI' order by ID_ZESP;
+
+--11
+select ID_PRAC, ID_SZEFA, NAZWISKO, PLACA_POD from pracownicy where PLACA_POD>1000 and ID_SZEFA is not null; 
+
+--12
+select NAZWISKO, ID_ZESP from pracownicy where (NAZWISKO like 'M%' or NAZWISKO like '%SKI') and ID_ZESP=20 order by NAZWISKO;
+
+--13
+SELECT nazwisko, etat, PLACA_POD/20/8 as STAWKA FROM pracownicy WHERE (etat not like 'ADIUNKT') and (etat not like 'ASYSTENT') and (etat not like 'STAZYSTA') and (PLACA_POD not between 400 and 800) order by stawka;
+
+--14
+select NAZWISKO, ETAT, PLACA_POD, COALESCE(PLACA_DOD,0) as PLACA_DOD  from pracownicy where (PLACA_POD+COALESCE(placa_dod,0))>1000;
+
+--15
+select NAZWISKO|| ' PRACUJE OD ' || to_char(zatrudniony,'dd-mm-yyyy' )|| ' i zarabia '|| placa_pod from pracownicy where ETAT like 'PROFESOR';
